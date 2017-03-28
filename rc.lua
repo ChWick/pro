@@ -56,13 +56,15 @@ local exec   = function (s) oldspawn(s, false) end
 local shexec = awful.util.spawn_with_shell
 
 modkey        = "Mod4"
-terminal      = "termite"
-tmux          = "termite -e tmux"
-termax        = "termite --geometry 1680x1034+0+22"
-rootterm      = "sudo -i termite"
+terminal      = "x-terminal-emulator"
+tmux          = terminal .. " -e tmux"
+termax        = terminal .. " --geometry 1680x1034+0+22"
+rootterm      = "sudo -i " .. terminal
 browser       = "firefox"
 filemanager   = "spacefm"
 configuration = termax .. ' -e "vim -O $HOME/.config/awesome/rc.lua $HOME/.config/awesome/themes/' ..theme.. '/theme.lua"'
+editor = os.getenv("EDITOR") or "editor"
+editor_cmd = terminal .. " -e " .. editor
 
 -- | Table of layouts | --
 
