@@ -56,7 +56,7 @@ local exec   = function (s) oldspawn(s, false) end
 local shexec = awful.util.spawn_with_shell
 
 modkey        = "Mod4"
-terminal      = "x-terminal-emulator"
+terminal      = "gnome-terminal"
 tmux          = terminal .. " -e tmux"
 termax        = terminal .. " --geometry 1680x1034+0+22"
 rootterm      = "sudo -i " .. terminal
@@ -98,18 +98,33 @@ end
 
 -- | Menu | --
 
-menu_main = {
-  { "hibernate", "sudo pm-hibernate" },
-  { "poweroff",  "sudo poweroff"     },
-  { "restart",   awesome.restart     },
-  { "reboot",    "sudo reboot"       },
-  { "quit",      awesome.quit        }}
+local freedesktop = require("freedesktop")
 
-mainmenu = awful.menu({ items = {
-  { " awesome",       menu_main   },
-  { " file manager",  filemanager },
-  { " root terminal", rootterm    },
-  { " user terminal", terminal    }}})
+-- freedesktop entries only
+mymainmenu = awful.menu({ items = freedesktop.menu.build() })
+
+-- integrated in default rc.lua definition
+
+myawesomemenu = {
+    { "hotkeys", function() return false, hotkeys_popup.show_help end },
+    { "manual", terminal .. " -e man awesome" },
+    { "edit config", string.format("%s -e %s %s", terminal, editor, awesome.conffile) },
+    { "restart", awesome.restart },
+    { "quit", function() awesome.quit() end },
+	{ "hibernate", "pm-hibernate" },
+	{ "poweroff",  "poweroff"     },
+	{ "restart",   awesome.restart     },
+	{ "reboot",    "reboot"       },
+	{ "quit",      awesome.quit        }
+}
+mainmenu = awful.menu({
+    items = {
+        { "awesome", myawesomemenu, beautiful.awesome_icon },
+        { "applications", freedesktop.menu.build() },
+	    { " file manager",  filemanager },
+        { "open terminal", terminal },
+    }
+})
 
 -- | Markup | --
 
@@ -276,7 +291,7 @@ fswidget:set_bgimage(beautiful.widget_display)
 
 net_widgetdl = wibox.widget.textbox()
 net_widgetul = lain.widgets.net({
-    iface = "enp2s0",
+    iface = "enp8s0",
     settings = function()
         widget:set_markup(markup.font("Tamsyn 1", "  ") .. net_now.sent)
         net_widgetdl:set_markup(markup.font("Tamsyn 1", " ") .. net_now.received .. markup.font("Tamsyn 1", " "))
