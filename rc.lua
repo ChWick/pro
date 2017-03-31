@@ -747,18 +747,28 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- | run_once | --
 
-function run_once(cmd)
-  findme = cmd
-  firstspace = cmd:find(" ")
+function run_once(command, class, tag) 
+  -- create move callback
+  local callback 
+  callback = function(c) 
+    if c.class == class then 
+      awful.client.movetotag(tag, c) 
+      client.disconnect_signal("manage", callback) 
+    end 
+  end 
+  client.connect_signal("manage", callback) 
+  -- now check if not already running!     
+  local findme = command
+  local firstspace = findme:find(" ")
   if firstspace then
-     findme = cmd:sub(0, firstspace-1)
+    findme = findme:sub(0, firstspace-1)
   end
-  awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
+  -- finally run it
+  awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. command .. ")")
 end
 
 -- | Autostart | --
 
--- os.execute("pkill compton")
--- run_once("compton")
--- run_once("parcellite")
+run_once("firefox https://rocketchat.informatik.uni-wuerzburg.de", "Firefox", tags[2][5])
+run_once("evolution", "Evolution", tags[1][5])
 
