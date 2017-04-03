@@ -228,6 +228,26 @@ function ()
     mpdwidget.update()
 end)))
 
+-- | Volume | --
+
+volume_widget = wibox.widget.textbox()
+vicious.register(volume_widget, vicious.widgets.volume,
+function(widget, args)
+	if (args[2] == "♫") then
+		return args[1] .. "%"
+	else
+		return "0%"
+	end
+	--return args[1] .. "%"
+end, nil, "Master")
+
+widget_volume = wibox.widget.textbox()
+-- widget_volume:set_image(beautiful.widget_vol)
+widget_volume:set_text("♫")
+volumewidget = wibox.widget.background()
+volumewidget:set_widget(volume_widget)
+volumewidget:set_bgimage(beautiful.widget_display)
+
 -- | Mail | --
 
 mail_widget = wibox.widget.textbox()
@@ -432,6 +452,14 @@ for s = 1, screen.count() do
 
     right_layout:add(spr)
 
+	right_layout:add(widget_volume)
+    right_layout:add(widget_display_l)
+	right_layout:add(volumewidget)
+    right_layout:add(widget_display_r)
+    right_layout:add(spr5px)
+
+    right_layout:add(spr)
+
     right_layout:add(widget_mail)
     right_layout:add(widget_display_l)
     right_layout:add(mailwidget)
@@ -568,7 +596,12 @@ globalkeys = awful.util.table.join(
                   awful.util.getdir("cache") .. "/history_eval")
               end),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end)
+    awful.key({ modkey }, "p", function() menubar.show() end),
+
+    -- Audio
+    awful.key({ }, "XF86AudioRaiseVolume",    function () awful.util.spawn("amixer -q sset Master 3%+ unmute") vicious.force({ volume_widget, }) end),
+    awful.key({ }, "XF86AudioLowerVolume",    function () awful.util.spawn("amixer -q sset Master 3%- unmute") vicious.force({ volume_widget, }) end),
+    awful.key({ }, "XF86AudioMute",           function () awful.util.spawn("amixer -q -D pulse sset Master toggle") vicious.force({ volume_widget, }) end)
 )
 
 local wa = screen[mouse.screen].workarea
