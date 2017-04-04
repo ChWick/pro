@@ -802,6 +802,19 @@ end
 
 -- | Autostart | --
 
+-- handles themes, starts gnome-screensaver
+run_once("gnome-settings-daemon")
+
+-- for laptops and stuff
+run_once("gnome-power-manager")
+
+-- for mounting CDs, USB sticks, and such
+run_once("gnome-volume-manager")
+
+-- SSH/GPG agent
+run_once("eval `gnome-keyring-daemon`")
+
+-- other stuff
 run_once("firefox https://rocketchat.informatik.uni-wuerzburg.de", "Firefox", tags[2][5])
 run_once("evolution", "Evolution", tags[1][5])
 
